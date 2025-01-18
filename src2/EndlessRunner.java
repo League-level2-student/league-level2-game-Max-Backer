@@ -22,6 +22,7 @@ public class EndlessRunner implements ActionListener {
 		
 		frame.add(gamePanel);
 		frame.setVisible(true);
+		frame.addKeyListener(gamePanel);
 		
 	}
 
