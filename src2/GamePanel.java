@@ -17,20 +17,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	final int END = 2;
 	int currentState = MENU;
 	Obstacle obstacle;
-	Character character = new Character(20, EndlessRunner.HEIGHT - 50, 20, 20);
+	Character character = new Character(50, EndlessRunner.HEIGHT - 150, 85, 100);
 	ObjectManager objectManager = new ObjectManager(character);
 
 	Timer timer;
 	Font font;
 	Font font2;
+	
+	int score = 0;
 
 	public GamePanel() {
 		timer = new Timer(1000 / 60, this);
-		font = new Font("Arial", Font.PLAIN, 85);
-		font2 = new Font("Arial", Font.PLAIN, 45);
+		font = new Font("Arial", Font.PLAIN, 80);
+		font2 = new Font("Arial", Font.PLAIN, 40);
 
-		obstacle = new Obstacle(EndlessRunner.WIDTH, EndlessRunner.HEIGHT - 50, 50, 50); 
-		
+		obstacle = new Obstacle(EndlessRunner.WIDTH, EndlessRunner.HEIGHT - 150, 100, 200);
+
 		timer.start();
 
 	}
@@ -56,32 +58,44 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
 		g.setFont(font2);
 		g.setColor(Color.RED);
-		g.drawString("Objective: Survive as long as possible", 10, 250);
-		g.drawString("Press Space to Start", 200, 330);
+		g.drawString("Objective: Survive as long as possible", 53, 250);
+		g.drawString("Press ENTER to Start", 200, 330);
 
 	}
 
 	public void drawGameState(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT);
+		objectManager.update();
 		
-		objectManager.draw(g);
-
-	}
-
-	public void drawEndState(Graphics g) {
-		g.setColor(Color.GRAY);
+		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT);
 		
 		g.setFont(font2);
-		g.setColor(Color.BLACK);
-		g.drawString("You survived for this long", 50, 250);
+		g.setColor(Color.WHITE);
+		g.drawString("Time Alive: " + score/60, 15, 35);
+
+		objectManager.draw(g);
+		score++;
 		
+		if(!character.isActive) {
+			currentState = END;
+		}
+	}
+	
+	public void drawEndState(Graphics g) {
+		g.setColor(Color.GRAY);
+		g.fillRect(0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT);
+
+		g.setFont(font2);
+		g.setColor(Color.BLACK);
+		g.drawString("You survived for " + score/60 + " second(s)", 100, 250);
+
 		g.setFont(font);
 		g.setColor(Color.BLACK);
-		g.drawString("You Died", 150, 110);
+		g.drawString("You Died", 182, 110);
 		
-
+		g.setFont(font2);
+		g.setColor(Color.BLACK);
+		g.drawString("Press ENTER to Restart", 120, 370);
 	}
 
 	@Override
@@ -99,14 +113,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (currentState == MENU) {
 				currentState = GAME;
-			} else if (currentState == GAME) {
-				currentState = END;
+				objectManager = new ObjectManager(character);
+				
 			} else if (currentState == END) {
-				currentState = MENU;
+				currentState = MENU; 
 			}
+		}
+
+		if (currentState == GAME && e.getKeyCode() == KeyEvent.VK_SPACE) {
+			character.jump();
 		}
 
 	}
@@ -119,13 +137,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		character.up = false;
 
 	}
 

@@ -1,8 +1,11 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Random;
 
 public class Obstacle extends GameObject {
+	int speed = 10;
+	Random rand = new Random();
 
 	public Obstacle(int x, int y, int width, int height) {
 		super(x, y, width, height);
@@ -13,9 +16,18 @@ public class Obstacle extends GameObject {
 		g.fillRect(x, y, width, height);
 
 	}
-	
+		
 	public void update() {
-		x-=10;
+		super.update();
+		x-=speed;
+		
+		if(x + width < 0) {
+			x = EndlessRunner.WIDTH;
+			height = rand.nextInt(80, 130);
+			y = EndlessRunner.HEIGHT - height;
+			speed = rand.nextInt(9, 15);
+			
+		}
 	}
 
 }

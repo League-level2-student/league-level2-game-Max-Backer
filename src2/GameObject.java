@@ -5,19 +5,22 @@ public class GameObject {
 	int y;
 	int width;
 	int height;
-	Rectangle rect;
+	Rectangle collisionBox;
+	
+	boolean isActive;
 	
 	public GameObject(int x, int y, int width, int height) {
 		this.height = height;
 		this.x = x;
 		this.y = y;
 		this.width = width;
-		 rect = new Rectangle(x, y, width, height);
+		collisionBox = new Rectangle(x, y, width, height);
+		isActive = true;
 		
 	}
 	
 	public void update() {
-		rect.setBounds(x, y, width, height);
+		collisionBox.setBounds(x, y, width, height);
 	}
 
 }

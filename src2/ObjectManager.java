@@ -1,31 +1,38 @@
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ObjectManager {
-	ArrayList<Obstacle> obstacles = new ArrayList<>();
+	Obstacle obstacle;
 	Character character;
-	
+	Random rand = new Random();
 
 	public ObjectManager(Character character) {
 		this.character = character;
-
-	}
-	
-	public void addObstacle(Obstacle obstacle) {
-
-		obstacles.add(obstacle);
-		
+		obstacle = new Obstacle(EndlessRunner.WIDTH, EndlessRunner.HEIGHT - 150, 100, 200);
 	}
 
 	public void draw(Graphics g) {
-		for (Obstacle o : obstacles) {
-			o.draw(g);
 
-		}
-		
+		obstacle.draw(g);
 		character.draw(g);
-		
-		
+
+	}
+
+	public void update() {
+		character.update();
+		obstacle.update();
+
+		if (character.isActive) {
+			checkCollision();
+		}
+
+	}
+
+	void checkCollision() {
+		if (character.collisionBox.intersects(obstacle.collisionBox)) {
+			character.isActive = false;
+		}
 
 	}
 
