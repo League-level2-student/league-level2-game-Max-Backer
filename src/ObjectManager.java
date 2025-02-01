@@ -1,11 +1,8 @@
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.Random;
 
 public class ObjectManager {
 	Obstacle obstacle;
 	Character character;
-	Random rand = new Random();
 
 	public ObjectManager(Character character) {
 		this.character = character;

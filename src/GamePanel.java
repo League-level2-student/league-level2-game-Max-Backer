@@ -7,7 +7,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -23,8 +25,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	Timer timer;
 	Font font;
 	Font font2;
-	
+
 	int score = 0;
+
+	public static BufferedImage image;
+	public static boolean needImage = true;
+	public static boolean gotImage = false;
 
 	public GamePanel() {
 		timer = new Timer(1000 / 60, this);
@@ -32,6 +38,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		font2 = new Font("Arial", Font.PLAIN, 40);
 
 		obstacle = new Obstacle(EndlessRunner.WIDTH, EndlessRunner.HEIGHT - 150, 100, 200);
+		
+		if(needImage) {
+			loadImage("gabriel-gabas-x-pmwxv17xss1tctdo6o1-1280.jpg");
+		}
 
 		timer.start();
 
@@ -64,38 +74,54 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	}
 
 	public void drawGameState(Graphics g) {
+		if (gotImage) {
+			g.drawImage(image, 0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT, null);
+		} else {
+			g.setColor(Color.BLUE);
+			g.fillRect(0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT);
+		}
+		
 		objectManager.update();
-		
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT);
-		
+
 		g.setFont(font2);
 		g.setColor(Color.WHITE);
-		g.drawString("Time Alive: " + score/60, 15, 35);
+		g.drawString("Time Alive: " + score / 60, 15, 35);
 
 		objectManager.draw(g);
 		score++;
-		
-		if(!character.isActive) {
+
+		if (!character.isActive) {
 			currentState = END;
 		}
 	}
-	
+
 	public void drawEndState(Graphics g) {
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, EndlessRunner.WIDTH, EndlessRunner.HEIGHT);
 
 		g.setFont(font2);
 		g.setColor(Color.BLACK);
-		g.drawString("You survived for " + score/60 + " second(s)", 100, 250);
+		g.drawString("You survived for " + score / 60 + " second(s)", 115, 250);
 
 		g.setFont(font);
 		g.setColor(Color.BLACK);
-		g.drawString("You Died", 182, 110);
-		
+		g.drawString("You Died", 210, 120);
+
 		g.setFont(font2);
 		g.setColor(Color.BLACK);
-		g.drawString("Press ENTER to Restart", 120, 370);
+		g.drawString("Press ENTER to Restart", 145, 380);
+	}
+
+	void loadImage(String imageFile) {
+		if (needImage) {
+			try {
+				image = ImageIO.read(this.getClass().getResourceAsStream(imageFile));
+				gotImage = true;
+			} catch (Exception e) {
+
+			}
+			needImage = false;
+		}
 	}
 
 	@Override
@@ -117,9 +143,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 			if (currentState == MENU) {
 				currentState = GAME;
 				objectManager = new ObjectManager(character);
-				
 			} else if (currentState == END) {
-				currentState = MENU; 
+				currentState = MENU;
+				score = 0;
+				character = new Character(50, EndlessRunner.HEIGHT - 150, 85, 100);
+				objectManager = new ObjectManager(character);
 			}
 		}
 
